@@ -214,7 +214,13 @@
                                                 <div class="mb-2">
                                                     <small class="text-muted">
                                                         <i class="fas fa-university me-1"></i>
-                                                        {{ $item->prodi }}
+                                                        @if(!empty($item->prodi) && is_array($item->prodi))
+                                                            @foreach($item->prodi as $index => $prodi)
+                                                                {{ $prodi }}@if($index < count($item->prodi) - 1), @endif
+                                                            @endforeach
+                                                        @else
+                                                            {{ $item->prodi }}
+                                                        @endif
                                                     </small>
                                                     @if(!empty($item->kelas) && is_array($item->kelas))
                                                         <div class="mt-1">
@@ -272,7 +278,13 @@
                                                 <div class="col">
                                                     <small class="text-muted">
                                                         <i class="fas fa-university me-1"></i>
-                                                        {{ $item->prodi }}
+                                                        @if(!empty($item->prodi) && is_array($item->prodi))
+                                                            @foreach($item->prodi as $index => $prodi)
+                                                                {{ $prodi }}@if($index < count($item->prodi) - 1), @endif
+                                                            @endforeach
+                                                        @else
+                                                            {{ $item->prodi }}
+                                                        @endif
                                                     </small>
                                                 </div>
                                                 <div class="col-auto">
@@ -327,7 +339,16 @@
                             <div class="presensi-info text-center">
                                 <h4><i class="fas fa-chalkboard-teacher me-2"></i>{{ $presensi->nama_kelas }}</h4>
                                 <p class="mb-1"><strong>Dosen:</strong> {{ $presensi->dosen->name }}</p>
-                                <p class="mb-1"><strong>Program Studi:</strong> {{ $presensi->prodi }}</p>
+                                <p class="mb-1">
+                                    <strong>Program Studi:</strong> 
+                                    @if(!empty($presensi->prodi) && is_array($presensi->prodi))
+                                        @foreach($presensi->prodi as $index => $prodi)
+                                            {{ $prodi }}@if($index < count($presensi->prodi) - 1), @endif
+                                        @endforeach
+                                    @else
+                                        {{ $presensi->prodi }}
+                                    @endif
+                                </p>
                                 @if(!empty($presensi->kelas) && is_array($presensi->kelas))
                                     <p class="mb-1">
                                         <strong>Kelas:</strong> 
@@ -497,54 +518,128 @@
     @if($presensi && !$error)
     <script>
         let countdownInterval;
+        let serverSyncInterval;
         let presensiCode = '{{ $presensi->kode_presensi }}';
+        let serverTime = {
+            waktu_mulai: new Date('{{ $presensi->waktu_mulai->format('Y-m-d H:i:s') }}').getTime(),
+            waktu_selesai: new Date('{{ $presensi->waktu_selesai->format('Y-m-d H:i:s') }}').getTime(),
+            server_now: new Date('{{ \Carbon\Carbon::now()->format('Y-m-d H:i:s') }}').getTime(),
+            client_start: new Date().getTime()
+        };
         
-        // Update countdown dan info presensi
-        function updatePresensiInfo() {
+        // Fungsi untuk mendapatkan waktu server yang sinkron
+        function getCurrentServerTime() {
+            const clientNow = new Date().getTime();
+            const clientElapsed = clientNow - serverTime.client_start;
+            return serverTime.server_now + clientElapsed;
+        }
+        
+        // Fungsi untuk format waktu countdown
+        function formatCountdown(ms) {
+            if (ms <= 0) return '00:00:00:00';
+            
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            return `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Fungsi untuk format countdown dengan label
+        function formatCountdownWithLabels(ms) {
+            if (ms <= 0) return 'Waktu Habis';
+            
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            let result = [];
+            if (days > 0) result.push(`${days} hari`);
+            if (hours > 0) result.push(`${hours} jam`);
+            if (minutes > 0) result.push(`${minutes} menit`);
+            if (seconds > 0 || result.length === 0) result.push(`${seconds} detik`);
+            
+            return result.join(', ');
+        }
+        
+        // Update countdown secara real-time
+        function updateCountdown() {
+            const now = getCurrentServerTime();
+            const nimInput = document.getElementById('nim');
+            const submitBtn = document.getElementById('btn-submit');
+            const countdownDisplay = document.getElementById('countdown');
+            const timeRemaining = document.getElementById('time-remaining');
+            const statusBadge = document.getElementById('status-badge');
+            
+            if (now < serverTime.waktu_mulai) {
+                // Presensi belum mulai
+                const timeToStart = serverTime.waktu_mulai - now;
+                timeRemaining.textContent = formatCountdownWithLabels(timeToStart);
+                
+                nimInput.disabled = true;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-clock me-2"></i>Belum Dimulai';
+                statusBadge.className = 'status-badge bg-warning text-white';
+                statusBadge.innerHTML = '<i class="fas fa-clock me-1"></i>MENUNGGU DIMULAI';
+                
+            } else if (now >= serverTime.waktu_mulai && now <= serverTime.waktu_selesai) {
+                // Presensi sedang berlangsung
+                const timeToEnd = serverTime.waktu_selesai - now;
+                timeRemaining.textContent = formatCountdownWithLabels(timeToEnd);
+                
+                nimInput.disabled = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Presensi';
+                statusBadge.className = 'status-badge bg-success text-white';
+                
+            } else {
+                // Presensi sudah berakhir
+                timeRemaining.textContent = 'Waktu Habis';
+                
+                nimInput.disabled = true;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Presensi Ditutup';
+                statusBadge.className = 'status-badge bg-secondary text-white';
+                statusBadge.innerHTML = '<i class="fas fa-times-circle me-1"></i>SELESAI';
+                
+                // Stop countdown jika sudah berakhir
+                clearInterval(countdownInterval);
+            }
+        }
+        
+        // Sinkronisasi dengan server setiap 30 detik
+        function syncWithServer() {
             fetch(`{{ route('public.presensi.info') }}?kode=${presensiCode}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById('time-remaining').textContent = data.data.remaining_time;
-                        document.getElementById('total-absen').textContent = data.data.total_absen;
-                        
-                        const nimInput = document.getElementById('nim');
-                        const submitBtn = document.getElementById('btn-submit');
-                        
-                        if (data.data.status === 'belum_mulai') {
-                            // Presensi belum mulai - tampilkan countdown, disable form
-                            document.getElementById('countdown').innerHTML = data.data.remaining_time;
-                            nimInput.disabled = true;
-                            submitBtn.disabled = true;
-                            submitBtn.innerHTML = '<i class="fas fa-clock me-2"></i>Belum Dimulai';
-                            document.getElementById('status-badge').className = 'status-badge bg-warning text-white';
-                            document.getElementById('status-badge').innerHTML = '<i class="fas fa-clock me-1"></i>MENUNGGU DIMULAI';
-                        } else if (data.data.status === 'berakhir') {
-                            // Presensi sudah berakhir - tampilkan info, disable form
-                            document.getElementById('countdown').innerHTML = 'Waktu Habis';
-                            nimInput.disabled = true;
-                            submitBtn.disabled = true;
-                            submitBtn.innerHTML = '<i class="fas fa-lock me-2"></i>Presensi Ditutup';
-                            document.getElementById('status-badge').className = 'status-badge bg-secondary text-white';
-                            document.getElementById('status-badge').innerHTML = '<i class="fas fa-times-circle me-1"></i>SELESAI';
-                            clearInterval(countdownInterval);
-                        } else {
-                            // Presensi sedang berlangsung - enable form
-                            document.getElementById('countdown').innerHTML = data.data.remaining_time;
-                            nimInput.disabled = false;
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Presensi';
-                            document.getElementById('status-badge').className = 'status-badge bg-success text-white';
-                            document.getElementById('status-badge').innerHTML = '<i class="fas fa-circle-check me-1"></i><span id="total-absen">' + data.data.total_absen + '</span> mahasiswa telah presensi';
+                        // Update total absen
+                        const totalAbsenSpan = document.getElementById('total-absen');
+                        if (totalAbsenSpan) {
+                            totalAbsenSpan.textContent = data.data.total_absen;
                         }
+                        
+                        // Update server time untuk sinkronisasi
+                        if (data.data.server_time) {
+                            serverTime.server_now = new Date(data.data.server_time).getTime();
+                            serverTime.client_start = new Date().getTime();
+                        }
+                        
+                        console.log('Sinkronisasi server berhasil');
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => console.error('Error sinkronisasi:', error));
         }
         
-        // Mulai countdown
-        updatePresensiInfo();
-        countdownInterval = setInterval(updatePresensiInfo, 1000);
+        // Mulai countdown dan sinkronisasi
+        updateCountdown(); // Update pertama kali
+        countdownInterval = setInterval(updateCountdown, 1000); // Update setiap detik
+        
+        // Sinkronisasi dengan server setiap 30 detik
+        syncWithServer(); // Sync pertama kali
+        serverSyncInterval = setInterval(syncWithServer, 30000); // Sync setiap 30 detik
         
         // Handle form submit
         document.getElementById('form-submit-presensi').addEventListener('submit', function(e) {
@@ -626,7 +721,13 @@
             })
             .finally(() => {
                 // Re-enable form hanya jika presensi masih berlangsung
-                updatePresensiInfo(); // Update status terbaru
+                const now = getCurrentServerTime();
+                if (now >= serverTime.waktu_mulai && now <= serverTime.waktu_selesai) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Presensi';
+                }
+                // Force sync dengan server untuk update total absen
+                syncWithServer();
             });
         });
     </script>

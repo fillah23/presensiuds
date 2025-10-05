@@ -27,6 +27,7 @@ class Presensi extends Model
         'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
         'is_active' => 'boolean',
+        'prodi' => 'array', // Cast ke array untuk multiple selection
         'kelas' => 'array' // Cast ke array untuk multiple selection
     ];
 

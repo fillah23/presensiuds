@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('presensi', PresensiController::class);
     Route::post('/presensi/{presensi}/toggle-status', [PresensiController::class, 'toggleStatus'])->name('presensi.toggle-status');
+    Route::get('/presensi/{presensi}/export-mahasiswa', [PresensiController::class, 'exportMahasiswa'])->name('presensi.export-mahasiswa');
     Route::get('/presensi-ajax/prodi-options', [PresensiController::class, 'getProdiOptions'])->name('admin.presensi.get-prodi');
     Route::get('/presensi-ajax/kelas-by-prodi', [PresensiController::class, 'getKelasByProdi'])->name('admin.presensi.get-kelas');
 });

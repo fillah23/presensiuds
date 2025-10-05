@@ -18,8 +18,9 @@
             <div class="col-lg-5 col-12">
                 <div id="auth-left">
                     <div class="auth-logo">
-                        
-                     <img src="{{ asset('images/logo-presensi-kodekoding-alt.png') }}" alt="Background" style="width: 100%; height: 100%; object-fit: cover;">
+                    <link rel="stylesheet" href="{{ asset('assets/css/logo-theme.css') }}">
+                    <img class="logo-light" src="{{ asset('images/logo-presensi-kodekoding-alt.png') }}" alt="Background" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img class="logo-dark" src="{{ asset('images/logo-presensi-kodekoding-alt-white.png') }}" alt="Background" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
 
                     @if (session('success'))

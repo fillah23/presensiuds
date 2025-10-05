@@ -80,7 +80,15 @@
                                             <table class="table table-borderless">
                                                 <tr>
                                                     <td width="150"><strong>Program Studi</strong></td>
-                                                    <td>: {{ $presensi->prodi }}</td>
+                                                    <td>: 
+                                                        @if(!empty($presensi->prodi) && is_array($presensi->prodi))
+                                                            @foreach($presensi->prodi as $prodi)
+                                                                <span class="badge bg-success me-1">{{ $prodi }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            {{ $presensi->prodi }}
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td><strong>Kelas</strong></td>
@@ -155,6 +163,13 @@
                                             <a href="{{ url('/presensi?kode=' . $presensi->kode_presensi) }}" 
                                                class="btn btn-info" target="_blank">
                                                 <i class="bi bi-link-45deg me-1"></i>Link Presensi
+                                            </a>
+                                        @endif
+
+                                        @if($presensi->presensiMahasiswas->count() > 0)
+                                            <a href="{{ route('presensi.export-mahasiswa', $presensi) }}" 
+                                               class="btn btn-success">
+                                                <i class="bi bi-file-earmark-excel me-1"></i>Export Excel Mahasiswa
                                             </a>
                                         @endif
 

@@ -93,12 +93,13 @@
                                                 <div class="form-group mb-3">
                                                     <label for="prodi" class="form-label">Program Studi</label>
                                                     <select class="form-select @error('prodi') is-invalid @enderror" 
-                                                            id="prodi" name="prodi" required>
+                                                            id="prodi" name="prodi[]" multiple required>
                                                         <option value="">Pilih Program Studi</option>
                                                     </select>
                                                     @error('prodi')
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
+                                                    <small class="text-muted">Pilih satu atau lebih program studi. Tekan Ctrl/Cmd untuk memilih multiple.</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -229,21 +230,21 @@
                 
                 // Initialize Select2 after options loaded
                 $('#prodi').select2({
-                    placeholder: 'Pilih Program Studi',
+                    placeholder: 'Pilih Program Studi (bisa lebih dari 1)',
                     allowClear: true,
                     width: '100%'
                 });
                 
                 // Set old value if exists
                 @if(old('prodi'))
-                    $('#prodi').val('{{ old('prodi') }}').trigger('change');
+                    $('#prodi').val(@json(old('prodi'))).trigger('change');
                 @endif
                 
                 // Add event listener for prodi change
                 $('#prodi').on('change', function() {
-                    const selectedProdi = $(this).val();
-                    if (selectedProdi) {
-                        loadKelasByProdi(selectedProdi);
+                    const selectedProdis = $(this).val();
+                    if (selectedProdis && selectedProdis.length > 0) {
+                        loadKelasByMultipleProdis(selectedProdis);
                     } else {
                         // Clear kelas options
                         $('#kelas').empty().append('<option value="">Pilih Prodi terlebih dahulu</option>');
@@ -261,8 +262,11 @@
             });
     }
     
-    function loadKelasByProdi(prodiName) {
-        fetch(`{{ route("admin.presensi.get-kelas") }}?prodi=${encodeURIComponent(prodiName)}`)
+    function loadKelasByMultipleProdis(prodiNames) {
+        // Create query string for multiple prodis
+        const prodiQuery = prodiNames.map(prodi => `prodi[]=${encodeURIComponent(prodi)}`).join('&');
+        
+        fetch(`{{ route("admin.presensi.get-kelas") }}?${prodiQuery}`)
             .then(response => response.json())
             .then(data => {
                 const kelasSelect = document.getElementById('kelas');
@@ -275,7 +279,9 @@
                 let options = '<option value="">Pilih Kelas</option>';
                 
                 if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(function(kelas) {
+                    // Remove duplicates and sort
+                    const uniqueKelas = [...new Set(data)].sort();
+                    uniqueKelas.forEach(function(kelas) {
                         const selected = @json(old('kelas', [])).includes(kelas) ? 'selected' : '';
                         options += `<option value="${kelas}" ${selected}>${kelas}</option>`;
                     });

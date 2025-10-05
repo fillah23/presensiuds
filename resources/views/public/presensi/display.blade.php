@@ -100,10 +100,10 @@
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
             line-height: 1;
+            margin-top: 0;
         }
-        .countdown-unit {
-            text-align: center;
-            margin: 0 10px;
+        .countdown-main .row {
+            align-items: flex-start;
         }
         .countdown-number {
             font-size: 4rem;
@@ -128,6 +128,15 @@
             font-size: 1.2rem;
             margin-top: 10px;
             opacity: 0.9;
+        }
+        /* Samakan margin atas info-card kanan dengan countdown */
+        @media (min-width: 992px) {
+            .countdown-main {
+                margin-top: 32px;
+            }
+            .info-card.mt-4.mt-lg-5 {
+                margin-top: 32px !important;
+            }
         }
         .info-card {
             background: rgba(255, 255, 255, 0.1);
@@ -161,6 +170,24 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0.3; }
         }
+        
+        /* Table styling for mahasiswa list */
+        .table-dark {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .table-dark th {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ecf0f1;
+            font-weight: 600;
+        }
+        .table-dark td {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > td {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -180,7 +207,13 @@
                         </p>
                         <p class="mb-0 fs-6 fs-md-5 opacity-75">
                             <i class="fas fa-university me-2"></i>
-                            {{ $presensi->prodi }}
+                            @if(!empty($presensi->prodi) && is_array($presensi->prodi))
+                                @foreach($presensi->prodi as $index => $prodi)
+                                    {{ $prodi }}@if($index < count($presensi->prodi) - 1), @endif
+                                @endforeach
+                            @else
+                                {{ $presensi->prodi }}
+                            @endif
                             @if(!empty($presensi->kelas) && is_array($presensi->kelas))
                                 | <i class="fas fa-users me-1"></i>
                                 @foreach($presensi->kelas as $index => $kelas)
@@ -197,6 +230,10 @@
                         <div class="stats-display">
                             <i class="fas fa-users me-2"></i>
                             <span id="total-absen">0</span> Mahasiswa
+                        </div>
+                        <div class="stats-display">
+                            <i class="fas fa-qrcode text-primary me-2"></i>
+                            <span>Kode Presensi: </span> {{ $presensi->kode_presensi }}
                         </div>
                     </div>
                 </div>
@@ -242,9 +279,11 @@
                             SISA WAKTU PRESENSI
                         </div>
                     </div>
+                </div>
 
-                    <!-- Jadwal Info -->
-                    <div class="info-card mt-4 mt-lg-5">
+                <div class="col-lg-4 col-md-5">
+
+                    <div class="info-card">
                         <div class="row text-center">
                             <div class="col-4">
                                 <i class="fas fa-play-circle fa-2x text-success mb-2 d-none d-md-block"></i>
@@ -270,59 +309,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- QR Code & Instructions -->
-                <div class="col-lg-4 col-md-5">
-                    <div class="qr-display">
-                        <h5 class="h5 h-md-4 text-dark mb-3">
-                            <i class="fas fa-qrcode text-primary me-2"></i>
-                            Kode Presensi
-                        </h5>
-                        <div class="kode-presensi">
-                            {{ $presensi->kode_presensi }}
-                        </div>
-                        <p class="text-muted mt-3 mb-0 small">
-                            Scan atau masukkan kode di atas
-                        </p>
-                    </div>
-
-                    <div class="info-card">
-                        <h6 class="h6">
-                            <i class="fas fa-mobile-alt me-2"></i>
-                            Cara Presensi:
-                        </h6>
-                        <ol class="small mb-0">
-                            <li>Buka browser di HP</li>
-                            <li>Kunjungi: <br><strong class="text-break">{{ url('/presensi') }}</strong></li>
-                            <li>Masukkan kode presensi</li>
-                            <li>Input NIM Anda</li>
-                            <li>Klik Submit Presensi</li>
-                        </ol>
-                    </div>
-
-                    <!-- Program Studi Info -->
-                    <div class="info-card">
-                        <h6>
-                            <i class="fas fa-university me-2"></i>
-                            Program Studi:
-                        </h6>
-                        <p class="mb-2 fs-6 fs-md-5">
-                            <strong>{{ $presensi->prodi }}</strong>
-                        </p>
-                        @if(!empty($presensi->kelas) && is_array($presensi->kelas))
-                            <h6 class="mt-3">
-                                <i class="fas fa-users me-2"></i>
-                                Kelas:
-                            </h6>
-                            <div class="mb-2">
-                                @foreach($presensi->kelas as $kelas)
-                                    <span class="badge bg-primary me-1 mb-1">{{ $kelas }}</span>
-                                @endforeach
-                            </div>
-                        @endif
-                        <small class="text-muted">Target: {{ $totalMahasiswa }} mahasiswa</small>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -341,27 +327,40 @@
         @if($presensi->presensiMahasiswas->count() > 0)
         <div class="container mt-3">
             <div class="info-card">
-                <h6 class="h6">
+                <h6 class="h6 mb-3">
                     <i class="fas fa-users me-2"></i>
                     Mahasiswa yang Sudah Presensi ({{ $presensi->presensiMahasiswas->count() }}/{{ $totalMahasiswa }})
                 </h6>
-                <div class="row" id="mahasiswa-list">
-                    @foreach($presensi->presensiMahasiswas as $presensiMhs)
-                    <div class="col-md-6 col-lg-4 col-xl-3 mb-2">
-                        <div class="p-2 bg-success bg-opacity-20 border border-success rounded">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="flex-grow-1 me-2">
-                                    <div class="fw-bold small text-truncate">{{ $presensiMhs->nama_mahasiswa }}</div>
-                                    <div class="text-muted" style="font-size: 0.7rem;">{{ $presensiMhs->nim }}</div>
-                                </div>
-                                <div class="text-end flex-shrink-0">
-                                    <div style="font-size: 0.7rem;">{{ $presensiMhs->waktu_absen->format('H:i') }}</div>
-                                    <span class="badge bg-success" style="font-size: 0.55rem;">{{ ucfirst($presensiMhs->status) }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 15%;">NIM</th>
+                                <th style="width: 40%;">Nama Mahasiswa</th>
+                                <th style="width: 20%;">Kelas</th>
+                                <th style="width: 10%;">Waktu</th>
+                                <th style="width: 10%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mahasiswa-list">
+                            @foreach($presensi->presensiMahasiswas as $index => $presensiMhs)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td><small>{{ $presensiMhs->nim }}</small></td>
+                                <td><small>{{ $presensiMhs->nama_mahasiswa }}</small></td>
+                                <td><small>{{ $presensiMhs->kelas }}</small></td>
+                                <td><small>{{ $presensiMhs->waktu_absen->format('H:i') }}</small></td>
+                                <td>
+                                    <span class="badge {{ $presensiMhs->status === 'hadir' ? 'bg-success' : 'bg-warning' }}" 
+                                          style="font-size: 0.6rem;">
+                                        {{ ucfirst($presensiMhs->status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

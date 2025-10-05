@@ -96,14 +96,13 @@
                                 <div class="form-group mb-3">
                                     <label for="prodi" class="form-label">Program Studi</label>
                                     <select class="form-select @error('prodi') is-invalid @enderror" 
-                                            id="prodi" name="prodi" required>
-                                        <option value="{{ old('prodi', $presensi->prodi) }}" selected>
-                                            {{ old('prodi', $presensi->prodi) }}
-                                        </option>
+                                            id="prodi" name="prodi[]" multiple required>
+                                        <option value="">Loading...</option>
                                     </select>
                                     @error('prodi')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <small class="text-muted">Pilih satu atau lebih program studi. Tekan Ctrl/Cmd untuk memilih multiple.</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -232,7 +231,7 @@
             .then(response => response.json())
             .then(data => {
                 const prodiSelect = document.getElementById('prodi');
-                const currentProdi = '{{ old("prodi", $presensi->prodi) }}';
+                const currentProdis = @json(old('prodi', $presensi->prodi ?? []));
                 
                 // Check if response has error
                 if (data.error) {
@@ -248,7 +247,7 @@
                 
                 let options = '<option value="">Pilih Program Studi</option>';
                 data.forEach(function(prodi) {
-                    const selected = prodi.id == currentProdi ? 'selected' : '';
+                    const selected = currentProdis.includes(prodi.id) ? 'selected' : '';
                     options += `<option value="${prodi.id}" ${selected}>${prodi.nama}</option>`;
                 });
                 
@@ -256,23 +255,23 @@
                 
                 // Initialize Select2 after options loaded
                 $('#prodi').select2({
-                    placeholder: 'Pilih Program Studi',
+                    placeholder: 'Pilih Program Studi (bisa lebih dari 1)',
                     allowClear: true,
                     width: '100%'
                 });
                 
-                // Set current value if exists
-                if (currentProdi) {
-                    $('#prodi').val(currentProdi).trigger('change');
+                // Set current values if exists
+                if (currentProdis && currentProdis.length > 0) {
+                    $('#prodi').val(currentProdis).trigger('change');
                     // Load kelas for current prodi
-                    loadKelasByProdi(currentProdi);
+                    loadKelasByMultipleProdis(currentProdis);
                 }
                 
                 // Add event listener for prodi change
                 $('#prodi').on('change', function() {
-                    const selectedProdi = $(this).val();
-                    if (selectedProdi) {
-                        loadKelasByProdi(selectedProdi);
+                    const selectedProdis = $(this).val();
+                    if (selectedProdis && selectedProdis.length > 0) {
+                        loadKelasByMultipleProdis(selectedProdis);
                     } else {
                         // Clear kelas options
                         $('#kelas').empty().append('<option value="">Pilih Prodi terlebih dahulu</option>');
@@ -290,8 +289,11 @@
             });
     }
     
-    function loadKelasByProdi(prodiName) {
-        fetch(`{{ route("admin.presensi.get-kelas") }}?prodi=${encodeURIComponent(prodiName)}`)
+    function loadKelasByMultipleProdis(prodiNames) {
+        // Create query string for multiple prodis
+        const prodiQuery = prodiNames.map(prodi => `prodi[]=${encodeURIComponent(prodi)}`).join('&');
+        
+        fetch(`{{ route("admin.presensi.get-kelas") }}?${prodiQuery}`)
             .then(response => response.json())
             .then(data => {
                 const kelasSelect = document.getElementById('kelas');
@@ -305,7 +307,9 @@
                 let options = '<option value="">Pilih Kelas</option>';
                 
                 if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(function(kelas) {
+                    // Remove duplicates and sort
+                    const uniqueKelas = [...new Set(data)].sort();
+                    uniqueKelas.forEach(function(kelas) {
                         const selected = currentKelas.includes(kelas) ? 'selected' : '';
                         options += `<option value="${kelas}" ${selected}>${kelas}</option>`;
                     });

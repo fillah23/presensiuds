@@ -70,7 +70,7 @@
                                                     <td>
                                                         <strong>{{ $presensi->nama_kelas }}</strong>
                                                         <br>
-                                                        <small class="text-muted">{{ Str::limit($presensi->resume_kelas, 50) }}</small>
+                                                        {{-- <small class="text-muted">{{ Str::limit($presensi->resume_kelas, 50) }}</small> --}}
                                                     </td>
                                                     <td>
                                                         <span class="badge bg-secondary">{{ $presensi->kode_presensi }}</span>
@@ -83,7 +83,11 @@
                                                         <span class="badge bg-info">{{ $presensi->durasi_menit }} menit</span>
                                                     </td>
                                                     <td>
-                                                        <i class="bi bi-mortarboard me-1"></i>{{ $presensi->prodi }}
+                                                        @if(is_array($presensi->prodi))
+                                                            <i class="bi bi-mortarboard me-1"></i>{{ implode(', ', $presensi->prodi) }}
+                                                        @else
+                                                            <i class="bi bi-mortarboard me-1"></i>{{ $presensi->prodi }}
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         @php
@@ -101,7 +105,7 @@
                                                             <span class="badge bg-success">
                                                                 <i class="bi bi-play me-1"></i>Berlangsung
                                                             </span>
-                                                            <br><small class="text-success">{{ $presensi->getRemainingTime() }}</small>
+                                                            {{-- <br><small class="text-success">{{ $presensi->getRemainingTime() }}</small> --}}
                                                         @elseif($isUpcoming)
                                                             <span class="badge bg-warning">
                                                                 <i class="bi bi-clock me-1"></i>Menunggu
@@ -192,10 +196,45 @@
 
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
+<style>
+    /* Custom styling for DataTables buttons */
+    .dt-buttons {
+        margin-bottom: 15px;
+    }
+    .dt-button {
+        margin-right: 5px !important;
+        border-radius: 5px !important;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        float: right;
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    .dataTables_wrapper .dataTables_length {
+        float: left;
+        margin-bottom: 10px;
+    }
+    .dataTables_wrapper .dt-buttons {
+        float: left;
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+</style>
 
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- DataTables Buttons -->
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 
 <script>
     // Auto refresh setiap 30 detik untuk update status real-time
@@ -211,7 +250,39 @@
             },
             responsive: true,
             pageLength: 25,
-            order: [[1, 'asc']]
+            order: [[0, 'asc']], // Urutkan berdasarkan kolom No (ID)
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="bi bi-file-earmark-excel me-1"></i>Export Excel',
+                    className: 'btn btn-success btn-sm',
+                    title: 'Data Presensi - ' + new Date().toLocaleDateString('id-ID'),
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7] // Exclude action column
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="bi bi-file-earmark-pdf me-1"></i>Export PDF',
+                    className: 'btn btn-danger btn-sm',
+                    title: 'Data Presensi',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7] // Exclude action column
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="bi bi-printer me-1"></i>Print',
+                    className: 'btn btn-info btn-sm',
+                    title: 'Data Presensi',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7] // Exclude action column
+                    }
+                }
+            ]
         });
     });
 </script>

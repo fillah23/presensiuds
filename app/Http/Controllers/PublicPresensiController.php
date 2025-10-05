@@ -89,10 +89,14 @@ class PublicPresensiController extends Controller
 
         // Cek apakah mahasiswa sesuai dengan prodi presensi
         // Membandingkan nama prodi mahasiswa dengan nama prodi presensi
-        if ($mahasiswa->prodi->name !== $presensi->prodi) {
+        $mahasiswaProdi = $mahasiswa->prodi->name;
+        $presensiProdis = is_array($presensi->prodi) ? $presensi->prodi : [$presensi->prodi];
+        
+        if (!in_array($mahasiswaProdi, $presensiProdis)) {
+            $prodiStr = is_array($presensi->prodi) ? implode(', ', $presensi->prodi) : $presensi->prodi;
             return response()->json([
                 'success' => false,
-                'message' => "Anda tidak terdaftar dalam program studi untuk presensi ini. Presensi ini khusus untuk: {$presensi->prodi}"
+                'message' => "Anda tidak terdaftar dalam program studi untuk presensi ini. Presensi ini khusus untuk: {$prodiStr}"
             ]);
         }
 
@@ -207,7 +211,8 @@ class PublicPresensiController extends Controller
                 'nama_kelas' => $presensi->nama_kelas,
                 'dosen' => $presensi->dosen->name,
                 'waktu_mulai' => $presensi->waktu_mulai->format('H:i'),
-                'waktu_selesai' => $presensi->waktu_selesai->format('H:i')
+                'waktu_selesai' => $presensi->waktu_selesai->format('H:i'),
+                'server_time' => Carbon::now()->format('Y-m-d H:i:s')
             ]
         ]);
     }
@@ -227,9 +232,13 @@ class PublicPresensiController extends Controller
             abort(404, 'Presensi tidak ditemukan');
         }
 
-        // Get total mahasiswa berdasarkan nama prodi dan kelas
+        // Get total mahasiswa berdasarkan multiple prodi dan kelas
         $totalMahasiswaQuery = Mahasiswa::whereHas('prodi', function($query) use ($presensi) {
-            $query->where('name', $presensi->prodi);
+            if (is_array($presensi->prodi)) {
+                $query->whereIn('name', $presensi->prodi);
+            } else {
+                $query->where('name', $presensi->prodi);
+            }
         });
 
         // Filter berdasarkan kelas jika ada
