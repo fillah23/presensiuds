@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Auth;
         <div class="sidebar-menu">
             <ul class="menu">
                 {{-- User Info --}}
-                <li class="sidebar-item">
+                {{-- <li class="sidebar-item">
                     <div class="px-3 py-2">
                         <small class="text-muted">Selamat datang,</small>
                         <p class="mb-0 fw-bold">{{ Auth::user()->name ?? 'Guest' }}</p>
@@ -51,12 +51,12 @@ use Illuminate\Support\Facades\Auth;
                             @endif
                         </small>
                     </div>
-                </li>
+                </li> --}}
 
                 {{-- Divider --}}
-                <li class="sidebar-item">
+                {{-- <li class="sidebar-item">
                     <hr class="my-2 mx-3">
-                </li>
+                </li> --}}
 
                 {{-- Dashboard --}}
                 <li class="sidebar-item {{ Request::is('dashboard*') ? 'active' : '' }}">
@@ -91,21 +91,7 @@ use Illuminate\Support\Facades\Auth;
                         </ul>
                     </li>
 
-                    {{-- Management Absensi --}}
-                    <li class="sidebar-item has-sub">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-calendar-check"></i>
-                            <span>Management Absensi</span>
-                        </a>
-                        <ul class="submenu">
-                            <li class="submenu-item">
-                                <a href="#">Laporan Absensi</a>
-                            </li>
-                            <li class="submenu-item">
-                                <a href="#">Rekap Absensi</a>
-                            </li>
-                        </ul>
-                    </li>
+                    
                 @endif
 
                 {{-- Dosen Menu --}}
@@ -126,22 +112,26 @@ use Illuminate\Support\Facades\Auth;
                         </a>
                     </li>
 
-                    {{-- Absensi --}}
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
+                    {{-- Presensi --}}
+                    <li class="sidebar-item {{ Request::is('admin/presensi*') ? 'active' : '' }}">
+                        <a href="{{ route('presensi.index') }}" class="sidebar-link">
                             <i class="bi bi-calendar-check"></i>
-                            <span>Absensi Saya</span>
-                        </a>
-                    </li>
-
-                    {{-- Riwayat Absensi --}}
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
-                            <i class="bi bi-clock-history"></i>
-                            <span>Riwayat Absensi</span>
+                            <span>Kelola Presensi</span>
                         </a>
                     </li>
                 @endif
+
+                {{-- Shared Menu for Both Roles --}}
+                {{-- @if(Auth::check() && (Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('dosen')))
+                    @if(Auth::user()->hasRole('superadmin'))
+                        <li class="sidebar-item {{ Request::is('admin/presensi*') ? 'active' : '' }}">
+                            <a href="{{ route('presensi.index') }}" class="sidebar-link">
+                                <i class="bi bi-calendar-check"></i>
+                                <span>Kelola Presensi</span>
+                            </a>
+                        </li>
+                    @endif
+                @endif --}}
 
                 {{-- Logout --}}
                 <li class="sidebar-item">

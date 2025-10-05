@@ -7,10 +7,18 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenProfileController;
+use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PublicPresensiController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('public.presensi.index');
 });
+
+// Public Presensi Routes (Tidak perlu login) - HARUS DIDAHULUKAN
+Route::get('/presensi', [PublicPresensiController::class, 'index'])->name('public.presensi.index');
+Route::post('/presensi/submit', [PublicPresensiController::class, 'submit'])->name('public.presensi.submit');
+Route::get('/presensi/info', [PublicPresensiController::class, 'getPresensiInfo'])->name('public.presensi.info');
+Route::get('/presensi/display/{kode}', [PublicPresensiController::class, 'display'])->name('public.presensi.display');
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -40,6 +48,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/mahasiswa/{mahasiswa}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
     Route::delete('/mahasiswa/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
     Route::get('/mahasiswa/ajax/prodis', [MahasiswaController::class, 'getProdisByFakultas'])->name('mahasiswa.ajax.prodis');
+});
+
+// Presensi Routes for Both Roles (Shared) - dengan prefix admin/presensi
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::resource('presensi', PresensiController::class);
+    Route::post('/presensi/{presensi}/toggle-status', [PresensiController::class, 'toggleStatus'])->name('presensi.toggle-status');
+    Route::get('/presensi-ajax/prodi-options', [PresensiController::class, 'getProdiOptions'])->name('admin.presensi.get-prodi');
 });
 
 // Dosen Routes

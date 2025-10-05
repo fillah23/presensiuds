@@ -33,7 +33,7 @@ class AuthController extends Controller
                 if ($user->role->name === 'superadmin') {
                     return redirect()->route('dashboard')->with('success', 'Berhasil login sebagai Super Admin!');
                 } elseif ($user->role->name === 'dosen') {
-                    return redirect()->route('dosen.dashboard')->with('success', 'Berhasil login sebagai Dosen!');
+                    return redirect()->route('presensi.index')->with('success', 'Berhasil login sebagai Dosen!');
                 }
             }
             

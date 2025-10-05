@@ -10,7 +10,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
                             <h3>Dashboard Dosen</h3>
-                            <p class="text-subtitle text-muted">Sistem Absensi Universitas Darussalam</p>
+                            <p class="text-subtitle text-muted">Sistem Absensi Universitas Dr Soebandi</p>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Selamat Datang, {{ $user->name }}!</h5>
                                     <p class="card-text">
-                                        Anda login sebagai <strong>Dosen</strong> di Sistem Absensi Universitas Darussalam.
+                                        Anda login sebagai <strong>Dosen</strong> di Sistem Absensi Universitas Dr Soebandi.
                                     </p>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -52,74 +52,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4>Menu Absensi</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <a href="#" class="btn btn-primary btn-block mb-3">
-                                                <i class="bi bi-calendar-check me-2"></i>
-                                                Absensi Masuk
-                                            </a>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <a href="#" class="btn btn-danger btn-block mb-3">
-                                                <i class="bi bi-calendar-x me-2"></i>
-                                                Absensi Keluar
-                                            </a>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <a href="#" class="btn btn-info btn-block mb-3">
-                                                <i class="bi bi-clock-history me-2"></i>
-                                                Riwayat Absensi
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Status Absensi Hari Ini -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Status Absensi Hari Ini</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Anda belum melakukan absensi hari ini.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Rekap Bulanan</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <h6 class="text-muted">Hadir</h6>
-                                            <h4 class="text-success">0 hari</h4>
-                                        </div>
-                                        <div class="col-6">
-                                            <h6 class="text-muted">Tidak Hadir</h6>
-                                            <h4 class="text-danger">0 hari</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
             </div>
         </div>

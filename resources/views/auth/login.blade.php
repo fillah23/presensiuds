@@ -19,7 +19,7 @@
                 <div id="auth-left">
                     <div class="auth-logo">
                         <h2 class="auth-title">Sistem Absensi</h2>
-                        <p class="auth-subtitle mb-5">Universitas Darussalam</p>
+                        <p class="auth-subtitle mb-5">Universitas Dr Soebandi</p>
                     </div>
 
                     @if (session('success'))
@@ -59,7 +59,7 @@
             <div class="col-lg-7 d-none d-lg-block">
                 <div id="auth-right">
                     <div class="auth-image">
-                        <img src="{{ asset('assets/compiled/jpg/login-bg.jpg') }}" alt="Background" style="width: 100%; height: 100vh; object-fit: cover;">
+                        {{-- <img src="{{ asset('assets/compiled/jpg/login-bg.jpg') }}" alt="Background" style="width: 100%; height: 100vh; object-fit: cover;"> --}}
                     </div>
                 </div>
             </div>

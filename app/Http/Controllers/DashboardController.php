@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Unit;
+use App\Models\Mahasiswa;
+use App\Models\Presensi;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -23,7 +27,18 @@ class DashboardController extends Controller
             $query->where('name', 'dosen');
         })->where('is_active', false)->count();
         
-        return view('admin.dashboard', compact('totalDosen', 'dosenAktif', 'dosenNonAktif'));
+        // Data tambahan untuk dashboard yang lebih lengkap
+        $totalFakultas = Unit::where('type', 'fakultas')->count();
+        $totalProdi = Unit::where('type', 'program_studi')->count();
+        $totalMahasiswa = Mahasiswa::count();
+        
+        // Presensi hari ini
+        $presensiHariIni = Presensi::whereDate('waktu_mulai', Carbon::today())->count();
+        
+        return view('admin.dashboard', compact(
+            'totalDosen', 'dosenAktif', 'dosenNonAktif',
+            'totalFakultas', 'totalProdi', 'totalMahasiswa', 'presensiHariIni'
+        ));
     }
 
     public function dosenDashboard()
