@@ -50,7 +50,9 @@ class PresensiController extends Controller
                 if (!\App\Models\Unit::where('type', 'program_studi')->where('name', $value)->exists()) {
                     $fail('Program studi yang dipilih tidak valid.');
                 }
-            }]
+            }],
+            'kelas' => 'required|array|min:1',
+            'kelas.*' => 'required|string'
         ]);
 
         $presensi = Presensi::create([
@@ -59,6 +61,7 @@ class PresensiController extends Controller
             'waktu_mulai' => $request->waktu_mulai,
             'durasi_menit' => (int)$request->durasi_menit,
             'prodi' => $request->prodi,
+            'kelas' => $request->kelas, // Save as JSON array
             'dosen_id' => Auth::id(),
             'is_active' => true
         ]);
@@ -79,10 +82,17 @@ class PresensiController extends Controller
 
         $presensi->load(['presensiMahasiswas', 'dosen']);
         
-        // Get total mahasiswa berdasarkan nama prodi (join dengan units table)
-        $totalMahasiswa = Mahasiswa::whereHas('prodi', function($query) use ($presensi) {
+        // Get total mahasiswa berdasarkan nama prodi dan kelas
+        $totalMahasiswaQuery = Mahasiswa::whereHas('prodi', function($query) use ($presensi) {
             $query->where('name', $presensi->prodi);
-        })->count();
+        });
+
+        // Filter berdasarkan kelas jika ada
+        if (!empty($presensi->kelas) && is_array($presensi->kelas)) {
+            $totalMahasiswaQuery->whereIn('kelas', $presensi->kelas);
+        }
+
+        $totalMahasiswa = $totalMahasiswaQuery->count();
 
         return view('admin.presensi.show', compact('presensi', 'totalMahasiswa'));
     }
@@ -133,7 +143,9 @@ class PresensiController extends Controller
                 if (!\App\Models\Unit::where('type', 'program_studi')->where('name', $value)->exists()) {
                     $fail('Program studi yang dipilih tidak valid.');
                 }
-            }]
+            }],
+            'kelas' => 'required|array|min:1',
+            'kelas.*' => 'required|string'
         ]);
 
         $presensi->update([
@@ -141,7 +153,8 @@ class PresensiController extends Controller
             'resume_kelas' => $request->resume_kelas,
             'waktu_mulai' => $request->waktu_mulai,
             'durasi_menit' => (int)$request->durasi_menit,
-            'prodi' => $request->prodi
+            'prodi' => $request->prodi,
+            'kelas' => $request->kelas
         ]);
 
         // Update waktu selesai
@@ -213,6 +226,37 @@ class PresensiController extends Controller
         } catch (\Exception $e) {
             Log::error('Error in getProdiOptions: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to load prodi data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get kelas options based on prodi for AJAX
+     */
+    public function getKelasByProdi(Request $request)
+    {
+        try {
+            $prodiName = $request->get('prodi');
+            
+            if (!$prodiName) {
+                return response()->json(['error' => 'Prodi parameter required'], 400);
+            }
+
+            // Get distinct kelas from mahasiswa based on prodi name
+            $kelas = Mahasiswa::whereHas('prodi', function($query) use ($prodiName) {
+                $query->where('name', $prodiName);
+            })
+            ->select('kelas')
+            ->distinct()
+            ->orderBy('kelas')
+            ->pluck('kelas')
+            ->filter() // Remove null/empty values
+            ->values()
+            ->toArray();
+
+            return response()->json($kelas);
+        } catch (\Exception $e) {
+            Log::error('Error in getKelasByProdi: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load kelas data: ' . $e->getMessage()], 500);
         }
     }
 }

@@ -17,6 +17,7 @@ class Presensi extends Model
         'durasi_menit',
         'waktu_selesai',
         'prodi',
+        'kelas', // Tambah field kelas (JSON untuk multiple)
         'dosen_id',
         'is_active',
         'kode_presensi'
@@ -25,7 +26,8 @@ class Presensi extends Model
     protected $casts = [
         'waktu_mulai' => 'datetime',
         'waktu_selesai' => 'datetime',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'kelas' => 'array' // Cast ke array untuk multiple selection
     ];
 
     protected static function boot()

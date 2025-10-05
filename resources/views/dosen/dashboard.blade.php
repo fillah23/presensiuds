@@ -10,7 +10,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
                             <h3>Dashboard Dosen</h3>
-                            <p class="text-subtitle text-muted">Sistem Absensi Kode Koding</p>
+                            <p class="text-subtitle text-muted">Sistem Presensi Kode Koding</p>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Selamat Datang, {{ $user->name }}!</h5>
                                     <p class="card-text">
-                                        Anda login sebagai <strong>Dosen</strong> di Sistem Absensi Kode Koding.
+                                        Anda login sebagai <strong>Dosen</strong> di Sistem Presensi Kode Koding.
                                     </p>
                                     <div class="row">
                                         <div class="col-md-6">

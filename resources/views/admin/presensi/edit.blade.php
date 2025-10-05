@@ -82,6 +82,7 @@
                                                         <option value="60" {{ old('durasi_menit', $presensi->durasi_menit) == '60' ? 'selected' : '' }}>60 menit</option>
                                                         <option value="90" {{ old('durasi_menit', $presensi->durasi_menit) == '90' ? 'selected' : '' }}>90 menit</option>
                                                         <option value="120" {{ old('durasi_menit', $presensi->durasi_menit) == '120' ? 'selected' : '' }}>120 menit</option>
+                                                        <option value="180" {{ old('durasi_menit', $presensi->durasi_menit) == '180' ? 'selected' : '' }}>180 menit</option>
                                                     </select>
                                                     @error('durasi_menit')
                                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -90,24 +91,35 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group mb-3">
-                                                    <label for="prodi" class="form-label">Program Studi</label>
-                                                    <select class="form-select @error('prodi') is-invalid @enderror" 
-                                                            id="prodi" name="prodi" required>
-                                                        <option value="{{ old('prodi', $presensi->prodi) }}" selected>
-                                                            {{ old('prodi', $presensi->prodi) }}
-                                                        </option>
-                                                    </select>
-                                                    @error('prodi')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="prodi" class="form-label">Program Studi</label>
+                                    <select class="form-select @error('prodi') is-invalid @enderror" 
+                                            id="prodi" name="prodi" required>
+                                        <option value="{{ old('prodi', $presensi->prodi) }}" selected>
+                                            {{ old('prodi', $presensi->prodi) }}
+                                        </option>
+                                    </select>
+                                    @error('prodi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="kelas" class="form-label">Kelas</label>
+                                    <select class="form-select @error('kelas') is-invalid @enderror" 
+                                            id="kelas" name="kelas[]" multiple required>
+                                        <option value="">Loading...</option>
+                                    </select>
+                                    @error('kelas')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">Pilih satu atau lebih kelas. Tekan Ctrl/Cmd untuk memilih multiple.</small>
+                                </div>
+                            </div>
+                        </div>                                        <div class="form-group">
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="bi bi-check-circle me-1"></i>Update Presensi
                                             </button>
@@ -206,6 +218,13 @@
     $(document).ready(function() {
         // Load program studi options first
         loadProdiOptions();
+        
+        // Initialize Select2 for Kelas (empty initially)
+        $('#kelas').select2({
+            placeholder: 'Loading...',
+            allowClear: true,
+            width: '100%'
+        });
     });
 
     function loadProdiOptions() {
@@ -245,11 +264,72 @@
                 // Set current value if exists
                 if (currentProdi) {
                     $('#prodi').val(currentProdi).trigger('change');
+                    // Load kelas for current prodi
+                    loadKelasByProdi(currentProdi);
                 }
+                
+                // Add event listener for prodi change
+                $('#prodi').on('change', function() {
+                    const selectedProdi = $(this).val();
+                    if (selectedProdi) {
+                        loadKelasByProdi(selectedProdi);
+                    } else {
+                        // Clear kelas options
+                        $('#kelas').empty().append('<option value="">Pilih Prodi terlebih dahulu</option>');
+                        $('#kelas').select2({
+                            placeholder: 'Pilih Prodi terlebih dahulu',
+                            allowClear: true,
+                            width: '100%'
+                        });
+                    }
+                });
             })
             .catch(error => {
                 console.error('Error loading prodi:', error);
                 alert('Gagal memuat data program studi');
+            });
+    }
+    
+    function loadKelasByProdi(prodiName) {
+        fetch(`{{ route("admin.presensi.get-kelas") }}?prodi=${encodeURIComponent(prodiName)}`)
+            .then(response => response.json())
+            .then(data => {
+                const kelasSelect = document.getElementById('kelas');
+                const currentKelas = @json(old('kelas', $presensi->kelas ?? []));
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                let options = '<option value="">Pilih Kelas</option>';
+                
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(function(kelas) {
+                        const selected = currentKelas.includes(kelas) ? 'selected' : '';
+                        options += `<option value="${kelas}" ${selected}>${kelas}</option>`;
+                    });
+                } else {
+                    options = '<option value="">Tidak ada kelas tersedia</option>';
+                }
+                
+                kelasSelect.innerHTML = options;
+                
+                // Reinitialize Select2 for Kelas
+                $('#kelas').select2({
+                    placeholder: 'Pilih Kelas (bisa lebih dari 1)',
+                    allowClear: true,
+                    width: '100%'
+                });
+                
+                // Set current values if exists
+                if (currentKelas && currentKelas.length > 0) {
+                    $('#kelas').val(currentKelas).trigger('change');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading kelas:', error);
+                alert('Gagal memuat data kelas');
             });
     }
 </script>

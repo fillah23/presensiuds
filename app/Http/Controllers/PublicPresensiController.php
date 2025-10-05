@@ -96,6 +96,17 @@ class PublicPresensiController extends Controller
             ]);
         }
 
+        // Cek apakah mahasiswa sesuai dengan kelas presensi (jika kelas ditentukan)
+        if (!empty($presensi->kelas) && is_array($presensi->kelas)) {
+            if (!in_array($mahasiswa->kelas, $presensi->kelas)) {
+                $kelasStr = implode(', ', $presensi->kelas);
+                return response()->json([
+                    'success' => false,
+                    'message' => "Anda tidak terdaftar dalam kelas untuk presensi ini. Presensi ini khusus untuk kelas: {$kelasStr}"
+                ]);
+            }
+        }
+
         // Cek apakah sudah pernah absen
         $existingPresensi = PresensiMahasiswa::where('presensi_id', $presensi->id)
             ->where('nim', $request->nim)
@@ -216,10 +227,17 @@ class PublicPresensiController extends Controller
             abort(404, 'Presensi tidak ditemukan');
         }
 
-        // Get total mahasiswa berdasarkan nama prodi (join dengan units table)
-        $totalMahasiswa = Mahasiswa::whereHas('prodi', function($query) use ($presensi) {
+        // Get total mahasiswa berdasarkan nama prodi dan kelas
+        $totalMahasiswaQuery = Mahasiswa::whereHas('prodi', function($query) use ($presensi) {
             $query->where('name', $presensi->prodi);
-        })->count();
+        });
+
+        // Filter berdasarkan kelas jika ada
+        if (!empty($presensi->kelas) && is_array($presensi->kelas)) {
+            $totalMahasiswaQuery->whereIn('kelas', $presensi->kelas);
+        }
+
+        $totalMahasiswa = $totalMahasiswaQuery->count();
 
         return view('public.presensi.display', compact('presensi', 'totalMahasiswa'));
     }

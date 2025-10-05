@@ -115,12 +115,12 @@ use Illuminate\Support\Facades\Auth;
                     </li>
 
                     {{-- Data Mahasiswa --}}
-                    <li class="sidebar-item {{ Request::is('mahasiswa*') ? 'active' : '' }}">
+                    {{-- <li class="sidebar-item {{ Request::is('mahasiswa*') ? 'active' : '' }}">
                         <a href="{{ route('mahasiswa.index') }}" class="sidebar-link">
                             <i class="bi bi-people"></i>
                             <span>Data Mahasiswa</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                     {{-- Presensi --}}
                     <li class="sidebar-item {{ Request::is('admin/presensi*') ? 'active' : '' }}">

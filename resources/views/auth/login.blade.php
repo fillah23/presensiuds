@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Absensi</title>
-    <link rel="shortcut icon" href="{{ asset('images/logo.png') }}">
+    <title>Login - Sistem Presensi</title>
+    <link rel="shortcut icon" href="{{ asset('images/kodekoding-logo-icon-152.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/auth.css') }}">
@@ -18,8 +18,8 @@
             <div class="col-lg-5 col-12">
                 <div id="auth-left">
                     <div class="auth-logo">
-                        <h2 class="auth-title">Sistem Absensi</h2>
-                        <p class="auth-subtitle mb-5">Kode Koding</p>
+                        
+                     <img src="{{ asset('images/logo-presensi-kodekoding-alt.png') }}" alt="Background" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
 
                     @if (session('success'))
@@ -55,11 +55,16 @@
                         <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Log in</button>
                     </form>
                 </div>
+                <div class="text-center  pb-4">
+                    <p class= "small">
+                        © {{ date('Y') }} Made with ❤️ by Kode Koding
+                    </p>
+                </div>
             </div>
             <div class="col-lg-7 d-none d-lg-block">
                 <div id="auth-right">
-                    <div class="auth-image">
-                        {{-- <img src="{{ asset('assets/compiled/jpg/login-bg.jpg') }}" alt="Background" style="width: 100%; height: 100vh; object-fit: cover;"> --}}
+                    <div class="auth-image d-flex justify-content-center align-items-center" style="height: 100vh;">
+                        <img src="{{ asset('images/logo-kodekoding-white.png') }}" alt="Background" style="max-width: 70%; max-height: 60vh; object-fit: contain; display: block; margin: auto;">
                     </div>
                 </div>
             </div>

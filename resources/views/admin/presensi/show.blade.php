@@ -83,6 +83,18 @@
                                                     <td>: {{ $presensi->prodi }}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td><strong>Kelas</strong></td>
+                                                    <td>: 
+                                                        @if(!empty($presensi->kelas) && is_array($presensi->kelas))
+                                                            @foreach($presensi->kelas as $kelas)
+                                                                <span class="badge bg-info me-1">{{ $kelas }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted">Semua kelas</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <td><strong>Target Peserta</strong></td>
                                                     <td>: {{ $totalMahasiswa }} mahasiswa</td>
                                                 </tr>

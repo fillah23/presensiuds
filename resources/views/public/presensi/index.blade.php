@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presensi Mahasiswa - UDS</title>
+    <link rel="shortcut icon" href="{{ asset('images/kodekoding-logo-icon-152.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -170,9 +171,9 @@
                 <button type="button" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#searchModal">
                     <i class="fas fa-search me-2"></i>Cari dengan Kode
                 </button>
-                <a href="{{ route('login') }}" class="btn btn-outline-light btn-admin-login">
+                {{-- <a href="{{ route('login') }}" class="btn btn-outline-light btn-admin-login">
                     <i class="fas fa-sign-in-alt me-2"></i>Login Admin/Dosen
-                </a>
+                </a> --}}
             </div>
         </div>
 
@@ -205,10 +206,27 @@
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <div class="flex-grow-1">
                                                 <h5 class="fw-bold mb-1">{{ $item->nama_kelas }}</h5>
-                                                <p class="text-muted mb-0">
+                                                <p class="text-muted mb-1">
                                                     <i class="fas fa-user-tie me-1"></i>
                                                     {{ $item->dosen->name }}
                                                 </p>
+                                                <!-- Tampilkan Program Studi dan Kelas -->
+                                                <div class="mb-2">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-university me-1"></i>
+                                                        {{ $item->prodi }}
+                                                    </small>
+                                                    @if(!empty($item->kelas) && is_array($item->kelas))
+                                                        <div class="mt-1">
+                                                            <small class="text-muted me-1">
+                                                                <i class="fas fa-users me-1"></i>Kelas:
+                                                            </small>
+                                                            @foreach($item->kelas as $kelas)
+                                                                <span class="badge bg-light text-dark me-1" style="font-size: 0.65rem;">{{ $kelas }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
                                             <span class="badge {{ $statusClass }} px-3 py-2">
                                                 <i class="{{ $statusIcon }} me-1"></i>
@@ -309,6 +327,15 @@
                             <div class="presensi-info text-center">
                                 <h4><i class="fas fa-chalkboard-teacher me-2"></i>{{ $presensi->nama_kelas }}</h4>
                                 <p class="mb-1"><strong>Dosen:</strong> {{ $presensi->dosen->name }}</p>
+                                <p class="mb-1"><strong>Program Studi:</strong> {{ $presensi->prodi }}</p>
+                                @if(!empty($presensi->kelas) && is_array($presensi->kelas))
+                                    <p class="mb-1">
+                                        <strong>Kelas:</strong> 
+                                        @foreach($presensi->kelas as $index => $kelas)
+                                            <span class="badge bg-light text-dark me-1">{{ $kelas }}</span>@if($index < count($presensi->kelas) - 1),@endif
+                                        @endforeach
+                                    </p>
+                                @endif
                                 <p class="mb-1"><strong>Waktu:</strong> {{ $presensi->waktu_mulai->format('H:i') }} - {{ $presensi->waktu_selesai->format('H:i') }}</p>
                                 <p class="mb-0"><strong>Kode:</strong> <span class="badge bg-light text-dark">{{ $presensi->kode_presensi }}</span></p>
                             </div>

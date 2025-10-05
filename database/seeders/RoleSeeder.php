@@ -17,12 +17,12 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'superadmin',
                 'display_name' => 'Super Admin',
-                'description' => 'Dapat mengakses semua fitur sistem absensi'
+                'description' => 'Dapat mengakses semua fitur sistem Presensi'
             ],
             [
                 'name' => 'dosen',
                 'display_name' => 'Dosen',
-                'description' => 'Dapat melakukan absensi dan melihat data absensi sendiri'
+                'description' => 'Dapat melakukan Presensi dan melihat data Presensi sendiri'
             ]
         ];
 

@@ -96,9 +96,9 @@
                                 <div class="col-md-6">
                                     <div class="card bg-light">
                                         <div class="card-body">
-                                            <h6 class="card-title">Statistik Absensi</h6>
+                                            <h6 class="card-title">Statistik Presensi</h6>
                                             <p class="card-text">
-                                                <small class="text-muted">Fitur ini akan tersedia setelah sistem absensi diimplementasikan.</small>
+                                                <small class="text-muted">Fitur ini akan tersedia setelah sistem Presensi diimplementasikan.</small>
                                             </p>
                                             <div class="row text-center">
                                                 <div class="col-4">

@@ -13,16 +13,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-lg-0">
                     <li class="nav-item dropdown me-1">
-                        <a class="nav-link active dropdown-toggle text-gray-600" href="#" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class='bi bi-envelope bi-sub fs-4'></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <h6 class="dropdown-header">Notifikasi</h6>
-                            </li>
-                            <li><a class="dropdown-item">Tidak ada notifikasi baru</a></li>
-                        </ul>
+                        
+                        
                     </li>
                 </ul>
                 <div class="dropdown">
@@ -38,7 +30,7 @@
                             </div>
                             <div class="user-img d-flex align-items-center">
                                 <div class="avatar avatar-md">
-                                    <img src="{{ asset('assets/compiled/jpg/1.jpg') }}">
+                                    <img src="{{ asset('images/kodekoding-logo-icon-152.png') }}">
                                 </div>
                             </div>
                         </div>
@@ -47,19 +39,7 @@
                         <li>
                             <h6 class="dropdown-header">Hello, {{ Auth::user()->name }}!</h6>
                         </li>
-                        <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i> Settings</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <form action="{{ route('logout.post') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout
-                                </button>
-                            </form>
-                        </li>
+                        
                     </ul>
                 </div>
             </div>

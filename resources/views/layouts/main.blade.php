@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi UDS</title>
+    <title>Presensi UDS</title>
     {{-- <link rel="shortcut icon" href="{{ asset('assets/compiled/svg/favicon.svg') }}" type="image/x-icon"> --}}
-    <link rel="shortcut icon"
-        href="{{ asset('images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/kodekoding-logo-icon-152.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/extensions/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/table-datatable.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app.css') }}">
@@ -31,6 +30,12 @@
 <body style="overflow-y: auto;">
     
     @yield('contents')
+
+    <div class="text-center mt-5 pb-4">
+        <p class= "small mb-2">
+            © {{ date('Y') }} Made with ❤️ by Kode Koding
+        </p>
+    </div>
     <script src="{{ asset('assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/compiled/js/app.js') }}"></script>
