@@ -74,6 +74,10 @@
                                                     <td><strong>Durasi</strong></td>
                                                     <td>: {{ $presensi->durasi_menit }} menit</td>
                                                 </tr>
+                                                <tr>
+                                                    <td><strong>Batas Terlambat</strong></td>
+                                                    <td>: {{ $presensi->batas_terlambat ?? 15 }} menit</td>
+                                                </tr>
                                             </table>
                                         </div>
                                         <div class="col-md-6">

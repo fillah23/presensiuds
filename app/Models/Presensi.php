@@ -15,6 +15,7 @@ class Presensi extends Model
         'resume_kelas',
         'waktu_mulai',
         'durasi_menit',
+        'batas_terlambat', // Tambah field batas_terlambat
         'waktu_selesai',
         'prodi',
         'kelas', // Tambah field kelas (JSON untuk multiple)

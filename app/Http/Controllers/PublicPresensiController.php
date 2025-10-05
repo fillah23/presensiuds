@@ -126,7 +126,7 @@ class PublicPresensiController extends Controller
         // Tentukan status (hadir atau terlambat)
         $waktuSekarang = Carbon::now();
         $waktuMulai = $presensi->waktu_mulai;
-        $batasTerlambat = $waktuMulai->copy()->addMinutes(15); // 15 menit toleransi
+        $batasTerlambat = $waktuMulai->copy()->addMinutes($presensi->batas_terlambat ?? 15); // Gunakan dari database atau default 15 menit
         
         $status = $waktuSekarang->lte($batasTerlambat) ? 'hadir' : 'terlambat';
 

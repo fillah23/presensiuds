@@ -46,6 +46,7 @@ class PresensiController extends Controller
             'resume_kelas' => 'required|string',
             'waktu_mulai' => 'required|date|after:now',
             'durasi_menit' => 'required|integer|min:5|max:180',
+            'batas_terlambat' => 'required|integer|min:1|max:60', // 1-60 menit
             'prodi' => 'required|array|min:1',
             'prodi.*' => ['required', 'string', function ($attribute, $value, $fail) {
                 if (!\App\Models\Unit::where('type', 'program_studi')->where('name', $value)->exists()) {
@@ -61,6 +62,7 @@ class PresensiController extends Controller
             'resume_kelas' => $request->resume_kelas,
             'waktu_mulai' => $request->waktu_mulai,
             'durasi_menit' => (int)$request->durasi_menit,
+            'batas_terlambat' => (int)$request->batas_terlambat, // Tambah field
             'prodi' => $request->prodi,
             'kelas' => $request->kelas, // Save as JSON array
             'dosen_id' => Auth::id(),
@@ -144,6 +146,7 @@ class PresensiController extends Controller
             'resume_kelas' => 'required|string',
             'waktu_mulai' => 'required|date|after:now',
             'durasi_menit' => 'required|integer|min:5|max:180',
+            'batas_terlambat' => 'required|integer|min:1|max:60', // 1-60 menit
             'prodi' => 'required|array|min:1',
             'prodi.*' => ['required', 'string', function ($attribute, $value, $fail) {
                 if (!\App\Models\Unit::where('type', 'program_studi')->where('name', $value)->exists()) {
@@ -159,6 +162,7 @@ class PresensiController extends Controller
             'resume_kelas' => $request->resume_kelas,
             'waktu_mulai' => $request->waktu_mulai,
             'durasi_menit' => (int)$request->durasi_menit,
+            'batas_terlambat' => (int)$request->batas_terlambat, // Tambah field
             'prodi' => $request->prodi,
             'kelas' => $request->kelas
         ]);

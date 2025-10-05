@@ -89,6 +89,27 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label for="batas_terlambat" class="form-label">Batas Keterlambatan (Menit)</label>
+                                                    <select class="form-select @error('batas_terlambat') is-invalid @enderror" 
+                                                            id="batas_terlambat" name="batas_terlambat" required>
+                                                        <option value="">Pilih Batas Terlambat</option>
+                                                        <option value="5" {{ old('batas_terlambat', $presensi->batas_terlambat) == '5' ? 'selected' : '' }}>5 menit</option>
+                                                        <option value="10" {{ old('batas_terlambat', $presensi->batas_terlambat) == '10' ? 'selected' : '' }}>10 menit</option>
+                                                        <option value="15" {{ old('batas_terlambat', $presensi->batas_terlambat) == '15' ? 'selected' : '' }}>15 menit</option>
+                                                        <option value="20" {{ old('batas_terlambat', $presensi->batas_terlambat) == '20' ? 'selected' : '' }}>20 menit</option>
+                                                        <option value="30" {{ old('batas_terlambat', $presensi->batas_terlambat) == '30' ? 'selected' : '' }}>30 menit</option>
+                                                        <option value="45" {{ old('batas_terlambat', $presensi->batas_terlambat) == '45' ? 'selected' : '' }}>45 menit</option>
+                                                        <option value="60" {{ old('batas_terlambat', $presensi->batas_terlambat) == '60' ? 'selected' : '' }}>60 menit</option>
+                                                    </select>
+                                                    @error('batas_terlambat')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                    <div class="form-text">Waktu toleransi sebelum mahasiswa dianggap terlambat</div>
+                                                </div>
+                                            </div>
                                         </div>
 
                         <div class="row">
