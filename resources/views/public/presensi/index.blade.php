@@ -395,7 +395,7 @@
         <!-- Footer -->
         <div class="text-center mt-5 pb-4">
             <p class="text-white-50 small mb-2">
-                © {{ date('Y') }} Universitas Dr Soebandi - Sistem Presensi Digital
+                © {{ date('Y') }} Made with ❤️ by Kode Koding
             </p>
         </div>
     </div>
