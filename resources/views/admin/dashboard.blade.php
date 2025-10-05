@@ -10,7 +10,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
                             <h3>Dashboard Super Admin</h3>
-                            <p class="text-subtitle text-muted">Sistem Absensi Universitas Dr Soebandi</p>
+                            <p class="text-subtitle text-muted">Sistem Absensi Kode Koding</p>
                         </div>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Selamat Datang, {{ Auth::user()->name }}!</h5>
                                     <p class="card-text">
-                                        Anda login sebagai <strong>{{ Auth::user()->role->display_name }}</strong> di Sistem Absensi Universitas Dr Soebandi.
+                                        Anda login sebagai <strong>{{ Auth::user()->role->display_name }}</strong> di Sistem Absensi Kode Koding.
                                         Gunakan menu di sebelah kiri untuk mengakses berbagai fitur yang tersedia.
                                     </p>
                                     <p class="text-muted">

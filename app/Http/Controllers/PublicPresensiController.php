@@ -18,7 +18,9 @@ class PublicPresensiController extends Controller
         $kode = $request->get('kode');
         $presensi = null;
         $error = null;
+        $presensiList = null;
 
+        // Jika ada parameter kode, cari presensi spesifik
         if ($kode) {
             $presensi = Presensi::where('kode_presensi', strtoupper($kode))
                 ->where('is_active', true)
@@ -27,10 +29,22 @@ class PublicPresensiController extends Controller
             if (!$presensi) {
                 $error = 'Kode presensi tidak ditemukan';
             }
-            // Hapus pengecekan isActive() agar bisa tetap menampilkan presensi yang sudah berakhir atau belum mulai
+        } else {
+            // Jika tidak ada kode, tampilkan daftar presensi aktif dengan pagination
+            $now = Carbon::now();
+            
+            $presensiList = Presensi::with('dosen')
+                ->where('is_active', true)
+                ->where(function($query) use ($now) {
+                    // Presensi yang sedang berlangsung atau belum mulai
+                    $query->where('waktu_selesai', '>=', $now)
+                          ->orWhere('waktu_mulai', '>', $now);
+                })
+                ->orderBy('waktu_mulai', 'asc')
+                ->paginate(9);
         }
 
-        return view('public.presensi.index', compact('presensi', 'error', 'kode'));
+        return view('public.presensi.index', compact('presensi', 'error', 'kode', 'presensiList'));
     }
 
     /**

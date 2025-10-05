@@ -1,0 +1,13 @@
+/* Logo theme visibility for dark/light mode */
+[data-bs-theme="dark"] .logo-light {
+  display: none !important;
+}
+[data-bs-theme="dark"] .logo-dark {
+  display: inline !important;
+}
+[data-bs-theme="light"] .logo-dark {
+  display: none !important;
+}
+[data-bs-theme="light"] .logo-light {
+  display: inline !important;
+}

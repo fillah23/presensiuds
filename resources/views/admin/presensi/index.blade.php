@@ -49,7 +49,7 @@
                         <div class="card-body">
                             @if($presensis->count() > 0)
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table1">
+                                    <table class="table table-striped" id="presensiTable">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -168,7 +168,7 @@
                                 </div>
                                 
                                 <div class="d-flex justify-content-center mt-3">
-                                    {{ $presensis->links() }}
+                                    {{-- Pagination handled by DataTables --}}
                                 </div>
                             @else
                                 <div class="text-center py-5">
@@ -190,10 +190,29 @@
     </div>
 </div>
 
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
     // Auto refresh setiap 30 detik untuk update status real-time
     setInterval(function() {
         location.reload();
     }, 30000);
+
+    // Inisialisasi DataTables
+    $(document).ready(function() {
+        $('#presensiTable').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+            },
+            responsive: true,
+            pageLength: 25,
+            order: [[1, 'asc']]
+        });
+    });
 </script>
 @endsection

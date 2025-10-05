@@ -1,0 +1,7 @@
+/* Perbesar logo sidebar */
+.logo-light,
+.logo-dark {
+  height: 32px !important;
+  max-height: 32px !important;
+  width: auto !important;
+}

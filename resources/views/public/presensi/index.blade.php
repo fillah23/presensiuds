@@ -17,6 +17,26 @@
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .presensi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .class-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: inherit;
         }
         .countdown-display {
             font-size: 3rem;
@@ -64,18 +84,6 @@
             border-radius: 20px;
             font-weight: bold;
         }
-        .expired {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .waiting {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
         .btn-admin-login {
             transition: all 0.3s ease;
             border: 2px solid rgba(255, 255, 255, 0.5);
@@ -88,55 +96,212 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
+        .status-active {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        .status-waiting {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+        .glass-card {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .pagination .page-link {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #667eea;
+            border-radius: 8px;
+            margin: 0 2px;
+            padding: 0.5rem 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .pagination .page-link:hover {
+            background: rgba(255, 255, 255, 1);
+            color: #764ba2;
+            border-color: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+        }
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .pagination .page-item.disabled .page-link {
+            background: rgba(255, 255, 255, 0.5);
+            color: rgba(102, 126, 234, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .countdown-card {
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .countdown-time {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row justify-content-center align-items-center min-vh-100">
-            <div class="col-lg-8 col-xl-6">
-                <div class="text-center mb-4">
-                    <h1 class="text-white mb-2">
-                        <i class="fas fa-graduation-cap me-2"></i>
-                        Sistem Presensi UDS
-                    </h1>
-                    <p class="text-white-50">Universitas Dr Soebandi</p>
-                    
-                    <!-- Tombol Login untuk Admin/Dosen -->
-                    <div class="mt-3">
-                        <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm btn-admin-login">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login Admin/Dosen
-                        </a>
-                    </div>
-                </div>
+    <div class="container-fluid py-4">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="text-white mb-2">
+                <img src="{{ asset('images/logo-presensi-kodekoding-alt-white.png') }}" 
+                     alt="Logo Presensi" 
+                     height="40" 
+                     class="me-2">
+                
+            </h1>
+            <p class="text-white-50">Kode Koding</p>
+            
+            <!-- Tombol Search dan Login -->
+            <div class="mt-3">
+                <button type="button" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#searchModal">
+                    <i class="fas fa-search me-2"></i>Cari dengan Kode
+                </button>
+                <a href="{{ route('login') }}" class="btn btn-outline-light btn-admin-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login Admin/Dosen
+                </a>
+            </div>
+        </div>
 
-                <div class="presensi-card p-4">
-                    @if(!$kode)
-                        <!-- Form Input Kode Presensi -->
+        @if(!$kode && !$presensi)
+            <!-- Daftar Presensi Aktif -->
+            <div class="row justify-content-center">
+                <div class="col-12 col-xl-10">
+                    @if($presensiList && $presensiList->count() > 0)
                         <div class="text-center mb-4">
-                            <i class="fas fa-qrcode fa-3x text-primary mb-3"></i>
-                            <h3>Masukkan Kode Presensi</h3>
-                            <p class="text-muted">Dapatkan kode presensi dari dosen Anda</p>
+                            <h3 class="text-white mb-3">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Presensi Tersedia
+                            </h3>
+                            <p class="text-white-50">Klik card untuk mengikuti presensi</p>
                         </div>
 
-                        <form action="{{ route('public.presensi.index') }}" method="GET">
-                            <div class="mb-3">
-                                <label class="form-label">Kode Presensi</label>
-                                <input type="text" name="kode" class="form-control text-center text-uppercase" 
-                                       placeholder="Masukkan 8 digit kode" maxlength="8" required
-                                       style="letter-spacing: 2px; font-size: 1.2rem;">
+                        <div class="row">
+                            @foreach($presensiList as $item)
+                                @php
+                                    $now = \Carbon\Carbon::now();
+                                    $isActive = $item->isActive();
+                                    $isWaiting = $now->lt($item->waktu_mulai);
+                                    $statusClass = $isActive ? 'status-active' : ($isWaiting ? 'status-waiting' : 'status-expired');
+                                    $statusText = $isActive ? 'Berlangsung' : ($isWaiting ? 'Belum Mulai' : 'Berakhir');
+                                    $statusIcon = $isActive ? 'fas fa-play-circle' : ($isWaiting ? 'fas fa-clock' : 'fas fa-stop-circle');
+                                @endphp
+                                
+                                <div class="col-lg-6 col-xl-4 mb-4">
+                                    <a href="{{ route('public.presensi.index', ['kode' => $item->kode_presensi]) }}" class="class-card d-block p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="flex-grow-1">
+                                                <h5 class="fw-bold mb-1">{{ $item->nama_kelas }}</h5>
+                                                <p class="text-muted mb-0">
+                                                    <i class="fas fa-user-tie me-1"></i>
+                                                    {{ $item->dosen->name }}
+                                                </p>
+                                            </div>
+                                            <span class="badge {{ $statusClass }} px-3 py-2">
+                                                <i class="{{ $statusIcon }} me-1"></i>
+                                                {{ $statusText }}
+                                            </span>
+                                        </div>
+
+                                        @if($isWaiting)
+                                            <!-- Countdown untuk presensi yang belum mulai -->
+                                            <div class="text-center mb-3">
+                                                <div class="countdown-card" 
+                                                     data-target="{{ $item->waktu_mulai->format('Y-m-d H:i:s') }}"
+                                                     style="background: linear-gradient(45deg, #f39c12, #e67e22); 
+                                                            color: white; 
+                                                            padding: 10px; 
+                                                            border-radius: 10px; 
+                                                            font-weight: bold;">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    Dimulai dalam: <span class="countdown-time">Loading...</span>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="row g-3">
+                                            <div class="col-6">
+                                                <div class="text-center p-2 bg-light rounded">
+                                                    <i class="fas fa-play text-success mb-1"></i>
+                                                    <div class="small text-muted">Mulai</div>
+                                                    <div class="fw-bold">{{ $item->waktu_mulai->format('H:i') }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-center p-2 bg-light rounded">
+                                                    <i class="fas fa-stop text-danger mb-1"></i>
+                                                    <div class="small text-muted">Selesai</div>
+                                                    <div class="fw-bold">{{ $item->waktu_selesai->format('H:i') }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 pt-3 border-top">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-university me-1"></i>
+                                                        {{ $item->prodi }}
+                                                    </small>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="badge bg-primary">
+                                                        {{ $item->kode_presensi }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Pagination -->
+                        @if($presensiList->hasPages())
+                            <div class="d-flex justify-content-center mt-5">
+                                {{ $presensiList->links('custom.pagination') }}
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 py-3">
-                                <i class="fas fa-search me-2"></i>Cari Presensi
-                            </button>
-                        </form>
+                        @endif
+
                     @else
+                        <div class="text-center">
+                            <div class="glass-card rounded-4 p-5 mx-auto" style="max-width: 500px;">
+                                <i class="fas fa-calendar-times fa-4x text-white mb-3 opacity-50"></i>
+                                <h4 class="text-white mb-3">Tidak Ada Presensi Aktif</h4>
+                                <p class="text-white-50 mb-4">Saat ini tidak ada presensi yang sedang berlangsung atau menunggu dimulai</p>
+                                <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                    <i class="fas fa-search me-2"></i>Cari dengan Kode
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @else
+            <!-- Halaman Presensi Spesifik -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="presensi-card p-4">
                         @if($error)
                             <!-- Error Message -->
                             <div class="text-center">
                                 <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                                 <h4 class="text-danger">{{ $error }}</h4>
                                 <a href="{{ route('public.presensi.index') }}" class="btn btn-secondary mt-3">
-                                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                                    <i class="fas fa-arrow-left me-2"></i>Kembali ke Beranda
                                 </a>
                             </div>
                         @else
@@ -187,7 +352,7 @@
                             <!-- Links -->
                             <div class="text-center mt-4">
                                 <a href="{{ route('public.presensi.index') }}" class="btn btn-outline-secondary me-2">
-                                    <i class="fas fa-arrow-left me-1"></i>Kembali
+                                    <i class="fas fa-home me-1"></i>Beranda
                                 </a>
                                 <a href="{{ route('public.presensi.display', $presensi->kode_presensi) }}" 
                                    class="btn btn-outline-primary" target="_blank">
@@ -195,20 +360,112 @@
                                 </a>
                             </div>
                         @endif
-                    @endif
+                    </div>
                 </div>
+            </div>
+        @endif
 
-                <div class="text-center mt-4">
-                    <p class="text-white-50 small mb-2">
-                        © {{ date('Y') }} Universitas Dr Soebandi - Sistem Presensi Digital
-                    </p>
+        <!-- Modal Search -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="searchModalLabel">
+                            <i class="fas fa-search me-2"></i>Cari Presensi
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('public.presensi.index') }}" method="GET">
+                            <div class="mb-3">
+                                <label class="form-label">Kode Presensi</label>
+                                <input type="text" name="kode" class="form-control text-center text-uppercase" 
+                                       placeholder="Masukkan 8 digit kode" maxlength="8" required
+                                       style="letter-spacing: 2px; font-size: 1.2rem;">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <i class="fas fa-search me-2"></i>Cari Presensi
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-5 pb-4">
+            <p class="text-white-50 small mb-2">
+                © {{ date('Y') }} Universitas Dr Soebandi - Sistem Presensi Digital
+            </p>
+        </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Script untuk interaksi homepage dan modal -->
+    <script>
+        $(document).ready(function() {
+            // Handle hover effect pada kartu
+            $('.class-card').hover(
+                function() {
+                    $(this).css('transform', 'translateY(-10px)');
+                },
+                function() {
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+            
+            // Handle search modal
+            $('#searchModal input[name="kode"]').on('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            });
+            
+            // Auto focus ketika modal dibuka
+            $('#searchModal').on('shown.bs.modal', function() {
+                $('#searchModal input[name="kode"]').focus();
+            });
+            
+            // Countdown untuk cards yang belum mulai
+            function updateCardCountdowns() {
+                $('.countdown-card').each(function() {
+                    const target = new Date($(this).data('target')).getTime();
+                    const now = new Date().getTime();
+                    const distance = target - now;
+                    
+                    if (distance > 0) {
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        
+                        let countdownText = '';
+                        if (days > 0) {
+                            countdownText = days + 'h ' + hours + 'j ' + minutes + 'm ' + seconds + 'd';
+                        } else if (hours > 0) {
+                            countdownText = hours + 'j ' + minutes + 'm ' + seconds + 'd';
+                        } else if (minutes > 0) {
+                            countdownText = minutes + 'm ' + seconds + 'd';
+                        } else {
+                            countdownText = seconds + 'd';
+                        }
+                        
+                        $(this).find('.countdown-time').text(countdownText);
+                    } else {
+                        // Countdown selesai, refresh halaman untuk update status
+                        location.reload();
+                    }
+                });
+            }
+            
+            // Update countdown setiap detik jika ada cards countdown
+            if ($('.countdown-card').length > 0) {
+                updateCardCountdowns(); // Update pertama kali
+                setInterval(updateCardCountdowns, 1000); // Update setiap detik
+            }
+        });
+    </script>
     
     @if($presensi && !$error)
     <script>

@@ -7,7 +7,17 @@ use Illuminate\Support\Facades\Auth;
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo px-2 mt-1 w-100">
-                    <h4 class="mb-3">Sistem Absensi UDS</h4>
+                {{-- Logo with theme switching --}}
+                <link rel="stylesheet" href="{{ asset('assets/css/logo-theme.css') }}">
+                <link rel="stylesheet" href="{{ asset('assets/css/logo-size.css') }}">
+                <img src="{{ asset('images/logo-presensi-kodekoding-alt.png') }}" 
+                    alt="Logo Presensi" 
+                    height="56" 
+                    class="me-2 logo-light">
+                <img src="{{ asset('images/logo-presensi-kodekoding-alt-white.png') }}" 
+                    alt="Logo Presensi" 
+                    height="56" 
+                    class="me-2 logo-dark">
                 </div>
                 <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img"

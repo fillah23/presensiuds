@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Absensi UDS</title>
+    <title>Login - Sistem Absensi</title>
     <link rel="shortcut icon" href="{{ asset('images/logo.png') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/compiled/css/app-dark.css') }}">
@@ -19,7 +19,7 @@
                 <div id="auth-left">
                     <div class="auth-logo">
                         <h2 class="auth-title">Sistem Absensi</h2>
-                        <p class="auth-subtitle mb-5">Universitas Dr Soebandi</p>
+                        <p class="auth-subtitle mb-5">Kode Koding</p>
                     </div>
 
                     @if (session('success'))
