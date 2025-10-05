@@ -77,7 +77,7 @@ class PresensiController extends Controller
     public function show(Presensi $presensi)
     {
         // Pastikan hanya dosen yang membuat presensi yang bisa melihat
-        if ($presensi->dosen_id !== Auth::id()) {
+        if ($presensi->dosen_id != Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -108,7 +108,7 @@ class PresensiController extends Controller
     public function edit(Presensi $presensi)
     {
         // Pastikan hanya dosen yang membuat presensi yang bisa edit
-        if ($presensi->dosen_id !== Auth::id()) {
+        if ($presensi->dosen_id != Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -129,7 +129,7 @@ class PresensiController extends Controller
     public function update(Request $request, Presensi $presensi)
     {
         // Pastikan hanya dosen yang membuat presensi yang bisa update
-        if ($presensi->dosen_id !== Auth::id()) {
+        if ($presensi->dosen_id != Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -177,7 +177,7 @@ class PresensiController extends Controller
     public function destroy(Presensi $presensi)
     {
         // Pastikan hanya dosen yang membuat presensi yang bisa hapus
-        if ($presensi->dosen_id !== Auth::id()) {
+        if ($presensi->dosen_id != Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -199,7 +199,7 @@ class PresensiController extends Controller
     public function toggleStatus(Presensi $presensi)
     {
         // Pastikan hanya dosen yang membuat presensi yang bisa toggle
-        if ($presensi->dosen_id !== Auth::id()) {
+        if ($presensi->dosen_id != Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
