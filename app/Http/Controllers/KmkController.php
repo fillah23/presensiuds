@@ -36,7 +36,7 @@ class KmkController extends Controller
         }
         
         // Dosen hanya bisa akses KMK miliknya
-        if ($user->role->name === 'dosen' && $kmk->parent_dosen_id !== Auth::id()) {
+        if ($user->role->name === 'dosen' && $kmk->parent_dosen_id != Auth::id()) {
             abort(403, 'Unauthorized - KMK ini bukan milik Anda');
         }
         
