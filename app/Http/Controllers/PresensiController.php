@@ -18,8 +18,11 @@ class PresensiController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
         $presensis = Presensi::with('dosen')
-            ->where('dosen_id', Auth::id())
+            ->where('dosen_id', $dosenId)
             ->orderBy('waktu_mulai', 'desc')
             ->paginate(10);
 
@@ -57,6 +60,9 @@ class PresensiController extends Controller
             'kelas.*' => 'required|string'
         ]);
 
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
         $presensi = Presensi::create([
             'nama_kelas' => $request->nama_kelas,
             'resume_kelas' => $request->resume_kelas,
@@ -65,7 +71,7 @@ class PresensiController extends Controller
             'batas_terlambat' => (int)$request->batas_terlambat, // Tambah field
             'prodi' => $request->prodi,
             'kelas' => $request->kelas, // Save as JSON array
-            'dosen_id' => Auth::id(),
+            'dosen_id' => $dosenId,
             'is_active' => true
         ]);
 
@@ -78,8 +84,11 @@ class PresensiController extends Controller
      */
     public function show(Presensi $presensi)
     {
-        // Pastikan hanya dosen yang membuat presensi yang bisa melihat
-        if ($presensi->dosen_id != Auth::id()) {
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
+        // Pastikan hanya dosen yang membuat presensi atau KMK yang bisa melihat
+        if ($presensi->dosen_id != $dosenId) {
             abort(403, 'Unauthorized');
         }
 
@@ -109,8 +118,11 @@ class PresensiController extends Controller
      */
     public function edit(Presensi $presensi)
     {
-        // Pastikan hanya dosen yang membuat presensi yang bisa edit
-        if ($presensi->dosen_id != Auth::id()) {
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
+        // Pastikan hanya dosen yang membuat presensi atau KMK yang bisa edit
+        if ($presensi->dosen_id != $dosenId) {
             abort(403, 'Unauthorized');
         }
 
@@ -130,8 +142,11 @@ class PresensiController extends Controller
      */
     public function update(Request $request, Presensi $presensi)
     {
-        // Pastikan hanya dosen yang membuat presensi yang bisa update
-        if ($presensi->dosen_id != Auth::id()) {
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
+        // Pastikan hanya dosen yang membuat presensi atau KMK yang bisa update
+        if ($presensi->dosen_id != $dosenId) {
             abort(403, 'Unauthorized');
         }
 
@@ -180,8 +195,11 @@ class PresensiController extends Controller
      */
     public function destroy(Presensi $presensi)
     {
-        // Pastikan hanya dosen yang membuat presensi yang bisa hapus
-        if ($presensi->dosen_id != Auth::id()) {
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
+        // Pastikan hanya dosen yang membuat presensi atau KMK yang bisa hapus
+        if ($presensi->dosen_id != $dosenId) {
             abort(403, 'Unauthorized');
         }
 

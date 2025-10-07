@@ -48,4 +48,20 @@ class DashboardController extends Controller
         
         return view('dosen.dashboard', compact('user'));
     }
+
+    public function kmkDashboard()
+    {
+        // Dashboard untuk KMK
+        $user = Auth::user();
+        $dosenId = $user->getPresensiDosenId();
+        
+        // Statistik presensi yang dikelola KMK
+        $totalPresensi = Presensi::where('dosen_id', $dosenId)->count();
+        $presensiAktif = Presensi::where('dosen_id', $dosenId)->where('is_active', true)->count();
+        $presensiHariIni = Presensi::where('dosen_id', $dosenId)
+            ->whereDate('waktu_mulai', Carbon::today())
+            ->count();
+        
+        return view('kmk.dashboard', compact('user', 'totalPresensi', 'presensiAktif', 'presensiHariIni'));
+    }
 }

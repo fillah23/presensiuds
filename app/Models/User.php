@@ -25,6 +25,7 @@ class User extends Authenticatable
         'nuptk',
         'nomor_whatsapp',
         'is_active',
+        'parent_dosen_id',
     ];
 
     /**
@@ -56,8 +57,32 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function parentDosen()
+    {
+        return $this->belongsTo(User::class, 'parent_dosen_id');
+    }
+
+    public function kmkUsers()
+    {
+        return $this->hasMany(User::class, 'parent_dosen_id');
+    }
+
     public function hasRole($roleName)
     {
         return $this->role && $this->role->name === $roleName;
+    }
+
+    public function canManagePresensi()
+    {
+        return $this->hasRole('superadmin') || $this->hasRole('dosen') || $this->hasRole('kmk');
+    }
+
+    public function getPresensiDosenId()
+    {
+        if ($this->hasRole('kmk')) {
+            return $this->parent_dosen_id;
+        }
+        
+        return $this->id;
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenProfileController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PublicPresensiController;
+use App\Http\Controllers\KmkController;
 
 Route::get('/', function () {
     return redirect()->route('public.presensi.index');
@@ -36,6 +37,9 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->group(function 
     Route::get('/mahasiswa/import/form', [MahasiswaController::class, 'importForm'])->name('mahasiswa.import.form');
     Route::post('/mahasiswa/import', [MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::get('/mahasiswa/template/download', [MahasiswaController::class, 'downloadTemplate'])->name('mahasiswa.template.download');
+    
+    // KMK Management Routes for Superadmin (dapat memilih dosen)
+    Route::resource('kmk', KmkController::class, ['as' => 'admin']);
 });
 
 // Mahasiswa Routes for Both Roles (Shared)
@@ -50,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mahasiswa/ajax/prodis', [MahasiswaController::class, 'getProdisByFakultas'])->name('mahasiswa.ajax.prodis');
 });
 
-// Presensi Routes for Both Roles (Shared) - dengan prefix admin/presensi
+// Presensi Routes for Dosen and KMK (Shared) - dengan prefix admin/presensi
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('presensi', PresensiController::class);
     Route::post('/presensi/{presensi}/toggle-status', [PresensiController::class, 'toggleStatus'])->name('presensi.toggle-status');
@@ -67,4 +71,12 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->group(function () {
     Route::get('/profile', [DosenProfileController::class, 'show'])->name('dosen.profile.show');
     Route::get('/profile/edit', [DosenProfileController::class, 'edit'])->name('dosen.profile.edit');
     Route::put('/profile', [DosenProfileController::class, 'update'])->name('dosen.profile.update');
+    
+    // KMK Management Routes (Hanya dosen yang bisa mengelola KMK)
+    Route::resource('kmk', KmkController::class);
+});
+
+// KMK Routes
+Route::middleware(['auth', 'role:kmk'])->prefix('kmk')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'kmkDashboard'])->name('kmk.dashboard');
 });

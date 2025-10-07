@@ -69,11 +69,15 @@ use Illuminate\Support\Facades\Auth;
                 </li> --}}
 
                 {{-- Dashboard --}}
-                <li class="sidebar-item {{ Request::is('dashboard*') ? 'active' : '' }}">
+                <li class="sidebar-item {{ Request::is('dashboard*') || Request::is('dosen/dashboard*') || Request::is('kmk/dashboard*') ? 'active' : '' }}">
                     @if(Auth::check() && Auth::user()->hasRole('superadmin'))
                         <a href="{{ route('dashboard') }}" class="sidebar-link">
-                    @else
+                    @elseif(Auth::check() && Auth::user()->hasRole('dosen'))
                         <a href="{{ route('dosen.dashboard') }}" class="sidebar-link">
+                    @elseif(Auth::check() && Auth::user()->hasRole('kmk'))
+                        <a href="{{ route('kmk.dashboard') }}" class="sidebar-link">
+                    @else
+                        <a href="{{ route('dashboard') }}" class="sidebar-link">
                     @endif
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
@@ -101,6 +105,14 @@ use Illuminate\Support\Facades\Auth;
                         </ul>
                     </li>
 
+                    {{-- KMK Management for Superadmin --}}
+                    <li class="sidebar-item {{ Request::is('admin/kmk*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.kmk.index') }}" class="sidebar-link">
+                            <i class="bi bi-people"></i>
+                            <span>Kelola KMK</span>
+                        </a>
+                    </li>
+
                     
                 @endif
 
@@ -114,14 +126,25 @@ use Illuminate\Support\Facades\Auth;
                         </a>
                     </li>
 
-                    {{-- Data Mahasiswa --}}
-                    {{-- <li class="sidebar-item {{ Request::is('mahasiswa*') ? 'active' : '' }}">
-                        <a href="{{ route('mahasiswa.index') }}" class="sidebar-link">
-                            <i class="bi bi-people"></i>
-                            <span>Data Mahasiswa</span>
+                    {{-- KMK Management --}}
+                    <li class="sidebar-item {{ Request::is('dosen/kmk*') ? 'active' : '' }}">
+                        <a href="{{ route('kmk.index') }}" class="sidebar-link">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Kelola KMK</span>
                         </a>
-                    </li> --}}
+                    </li>
 
+                    {{-- Presensi --}}
+                    <li class="sidebar-item {{ Request::is('admin/presensi*') ? 'active' : '' }}">
+                        <a href="{{ route('presensi.index') }}" class="sidebar-link">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Kelola Presensi</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- KMK Menu --}}
+                @if(Auth::check() && Auth::user()->hasRole('kmk'))
                     {{-- Presensi --}}
                     <li class="sidebar-item {{ Request::is('admin/presensi*') ? 'active' : '' }}">
                         <a href="{{ route('presensi.index') }}" class="sidebar-link">
